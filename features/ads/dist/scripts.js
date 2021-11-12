@@ -4,6 +4,7 @@ var Adv = function () {
     var request = new AdvRequests();
     var breakTimer;
     var dictionary = {};
+    var videoPlayers = [];
 
     this.ptsHandlerComponent = new PtsHandlerComponent();
 
@@ -127,6 +128,7 @@ var Adv = function () {
                     return;
                 }
                 createDictionaryVAST(scte_attributes.segmentation_upid, xmldata);
+                createVideoPlayers();
                 //Save dictionary on queue
                 advHashmap.setValue(scte_attributes.segmentation_upid, dictionary, advHashmap.type.STREAMEVENT);
                 advHashmap.setStatus(scte_attributes.segmentation_upid, advHashmap.lstStatus.LOADED);
@@ -212,9 +214,17 @@ var Adv = function () {
     }
 
     function startSCTEEventProcess(scte_attributes, scte_json) {
+        scte_attributes.segment_num = 3;
         self.ptsHandlerComponent.ptsStartEventTimeCheck(scte_json.splice_event.pts_time, null, function () {
             if (featuresManager.getFeature("linearAdTracking") && featuresManager.getFeature("linearAdTracking") === true) {
                 scheduleSpotTracking(scte_attributes.segment_num, scte_attributes.segmentation_upid);
+            }
+            var isAdSwitchBuffered = videoPlayers[scte_attributes.segment_num] && videoPlayers[scte_attributes.segment_num].canPlay();
+            if(isAdSwitchBuffered) {
+                videoPlayers[scte_attributes.segment_num].play();
+                logManager.log('videoPlayers[' + scte_attributes.segment_num + '] started playing.');
+            } else{
+                logManager.log('videoPlayers[' + scte_attributes.segment_num + '] play aborted: canPlay check failed');
             }
         }); //the LOAD event is triggered as soon as it is received, and then Ad Starts are triggered using their PTS
     }
@@ -262,23 +272,19 @@ var Adv = function () {
             if(adBreak.length == 0){
                 logManager.log("createDictionaryVAST() - no Ad Break found in VAST file.");
             }else{
-                try {
-                    var vast = adBreak[0].getElementsByTagNameNS("http://www.iab.net/vmap-1.0", "AdSource")[0].getElementsByTagNameNS("http://www.iab.net/vmap-1.0", "VASTAdData")[0].getElementsByTagName("VAST")[0];
-                    var arrayAds = vast.getElementsByTagName("Ad");
-                }catch (e) {
-                    logManager.log("createDictionaryVAST() - error on VAST parsing. " + e);
+                var vast = adBreak[0].getElementsByTagNameNS("http://www.iab.net/vmap-1.0", "AdSource")[0].getElementsByTagNameNS("http://www.iab.net/vmap-1.0", "VASTAdData")[0].getElementsByTagName("VAST")[0];
+                var arrayAds = vast.getElementsByTagName("Ad");
+                if (arrayAds.length > 0) {
+                    dictionary.id = segmentation_upid;
+                    logManager.log("createDictionaryVAST() - dictionary.id: " + dictionary.id);
+                    dictionary.spots = [];
+                    for (var i = 0; i < arrayAds.length; i++) {
+                        dictionary.spots[parseInt(arrayAds[i].getAttribute("sequence"))] = createTrackingItemsForDictionaryVAST(arrayAds[i]);
+                        logManager.log('createDictionaryVAST() - dictionary.spots[' + (parseInt(arrayAds[i].getAttribute("sequence"))) + '] tracking items loaded');
+                    }
+                } else {
+                    logManager.log("createDictionaryVAST() - no Ads found in VAST file.");
                 }
-            }
-            if (arrayAds.length > 0) {
-                dictionary.id = segmentation_upid;
-                logManager.log("createDictionaryVAST() - dictionary.id: " + dictionary.id);
-                dictionary.spots = [];
-                for (var i = 0; i < arrayAds.length; i++) {
-                    dictionary.spots[parseInt(arrayAds[i].getAttribute("sequence"))] = createTrackingItemsForDictionaryVAST(arrayAds[i]);
-                    logManager.log('createDictionaryVAST() - dictionary.spots[' + (parseInt(arrayAds[i].getAttribute("sequence"))) + '] tracking items loaded');
-                }
-            } else {
-                logManager.log("createDictionaryVAST() - no Ads found in VAST file.");
             }
             /*jshint ignore:end*/
         } catch (e) {
@@ -306,6 +312,31 @@ var Adv = function () {
             /*jshint ignore:end*/
         } catch (e) {
             logManager.error("createDictionary: " + e);
+        }
+    }
+
+    function createVideoPlayers() {
+        if (dictionary.spots == null) {
+            return;
+        }
+        /*
+        //un-comment if consent check is mandatory
+        if (consent.getModel() == null || consent.getModelConsents().TARGETED_ADVERTISING.consentStatus !== true) {
+            logManager.warning('createVideoPlayers - user consent not given to TARGETED ADVERTISING, players loading skipped');
+            return;
+        }*/
+        logManager.log("createVideoPlayers - linearAdSwitch " + featuresManager.getFeature("linearAdSwitch"));
+        if (featuresManager.getFeature("linearAdSwitch") == null || featuresManager.getFeature("linearAdSwitch") === false) {
+            return;
+        }
+        for (var i = 0; i < dictionary.spots.length; i++) {
+            if (dictionary.spots[i] != null && dictionary.spots[i].media_file_type === 'addressed') {
+                logManager.log("dictionary spot number " + i + " has a valid url");
+                videoPlayers[i] = new PlayerADS(function () {
+                    //onStop Callbacks
+                }, '_' + i);
+                videoPlayers[i].setUrl(dictionary.spots[i].media_file_url, true);
+            }
         }
     }
 
@@ -337,11 +368,10 @@ var Adv = function () {
             var mediaFileUrl = currentAD.getElementsByTagName("InLine")[0].getElementsByTagName("Creatives")[0].getElementsByTagName("Creative")[0].getElementsByTagName("Linear")[0].getElementsByTagName("MediaFiles")[0].getElementsByTagName("MediaFile")[0].textContent.trim();
             /*jshint ignore:start*/
             item["media_file_url"] = mediaFileUrl;
-            //Type is "ADDRESSED" by default.
-            item["media_file_type"] = "addressed";
+            item["media_file_type"] = "broadcasted";
             /*jshint ignore:end*/
             if (mediaFileUrl.indexOf(".mp4") !== -1 || mediaFileUrl.indexOf(".mpd") !== -1) {
-                item["media_file_type"] = "broadcasted";
+                item["media_file_type"] = "addressed";
             }
             return item;
         } catch (e) {
@@ -687,6 +717,83 @@ var AdvHashmap = function () {
     };
 };
 
+var PlayerADS = function (fnOnEndVideo, sequenceId) {
+
+    var video = null;
+    var videoUrl = null;
+    var self = this;
+    var canPlay = false;
+    var domId = sequenceId || '';
+
+    this.setUrl = function (url, forcePreload) {
+        videoUrl = url;
+        video = new VideoHTML5(self);
+        logManager.log("HTML5 player");
+        video.createHtmlObjects();
+        video.setUrl(videoUrl);
+        if (forcePreload) {
+            video.load();
+        }
+    };
+
+    this.onVideoPlayStarted = function () {
+    };
+
+    this.onVideoError = function onVideoError() {
+    };
+
+    this.onVideoEndVideo = function onVideoEndVideo() {
+        if (featuresManager.getFeature("numberOfVideoDecoders") !== 2) {
+           serviceManager.startBroadcast();
+        }
+        fnOnEndVideo();
+    };
+
+    this.onProgressVideo = function (time, duration) {
+    };
+
+    this.onSeeked = function () {
+    };
+
+    this.onCanPlay = function () {
+        canPlay = true;
+    }
+
+    this.play = function () {
+        logManager.log("PlayerADS - play() ");
+        if(video) {
+            if (featuresManager.getFeature("numberOfVideoDecoders") !== 2) {
+                serviceManager.stopBroadcast();
+            }
+            video.play();
+        } else {
+            logManager.log("skipping play() - video player not initialized yet (probably due to prefetch not completed)");
+        }
+    };
+
+    this.isPlaying = function () {
+        return video.isPlaying();
+    };
+
+    this.stop = function () {
+        video.stop();
+        video = null;
+        self.onVideoEndVideo();
+    };
+
+    this.canPlay = function () {
+        if(videoUrl && videoUrl.indexOf("http") == 0){
+            return canPlay;
+        }else{
+            return false;
+        }
+    }
+
+    this.getDomId = function () {
+        return domId;
+    };
+};
+
 var PtsHandlerComponent = function () {
 
     this.ptsStartEventTimeCheck = function (pts, payloadEvent, callback) {
@@ -708,10 +815,301 @@ var PtsHandlerComponent = function () {
                 }, adv.getConfiguration().PTS_CHECK_INTERVAL_TIME + featuresManager.getFeature("PTSCheckIntervalFineTuning"));
             }, pts - mediaSyncManager.getCurrentTime() - adv.getConfiguration().PTS_CHECK_START_TIME - featuresManager.getFeature("ptsSpotModeSwitchInDurationFineTuning"));
         } else {
+            callback(payloadEvent);
             logManager.error("ptsStartEventTimeCheck - MediaSynchroniser not available");
         }
     };
 };
+var VideoHTML5 = function (player) {
+
+    var videoObj = null;
+    var container = null;
+    var self = this;
+    var domId = player.getDomId();
+    var networkErrorHandling = false;
+
+    this.createHtmlObjects = function createHtmlObjects() {
+        try {
+            var elemDiv = $("<div id='videoContainer" + domId + "' class='fullscreenVideoBroadbandContainer hidden'></div>")[0];
+            var tagVideo = $("<video id='videoBB" + domId + "' class='fullscreenVideoBroadband'></video>")[0];
+            elemDiv.appendChild(tagVideo);
+            document.body.appendChild(elemDiv);
+            videoObj = document.getElementById("videoBB" + domId);
+            container = document.getElementById("videoContainer" + domId);
+            addEventsListener();
+        } catch (e) {
+            logManager.log("createHtmlObjects() : " + e.message);
+        }
+
+    };
+
+    function removeHtmlObjects() {
+        videoObj = null;
+        container = null;
+        $("#videoContainer" + domId).remove();
+    }
+
+    function addEventsListener() {
+        videoObj.addEventListener('ended', onEnded);
+        videoObj.addEventListener('emptied', onEmptied);
+        videoObj.addEventListener('error', onError);
+        videoObj.addEventListener('abort', onAbort);
+        videoObj.addEventListener('play', onPlay);
+        videoObj.addEventListener('seeked', onSeeked);
+        videoObj.addEventListener('canplay', onCanplay);
+        videoObj.addEventListener('canplaythrough', onCanplayThrough);
+        videoObj.addEventListener('loadedmetadata', onLoadedmetadata);
+        videoObj.addEventListener('loadstart', onLoadstart);
+        videoObj.addEventListener("waiting", onWaiting);
+        videoObj.addEventListener("stalled", onStalled);
+        videoObj.addEventListener("suspend", onSuspended);
+        videoObj.addEventListener('progress', onProgress);
+        videoObj.addEventListener('pause', onPause);
+        videoObj.addEventListener('playing', onPlaying);
+        videoObj.addEventListener('timeupdate', onTimeupdate);
+    }
+
+    function removeEventsListener() {
+        videoObj.removeEventListener('ended', onEnded);
+        videoObj.removeEventListener('emptied', onEmptied);
+        videoObj.removeEventListener('error', onError);
+        videoObj.removeEventListener('abort', onAbort);
+        videoObj.removeEventListener('play', onPlay);
+        videoObj.removeEventListener('seeked', onSeeked);
+        videoObj.removeEventListener('canplay', onCanplay);
+        videoObj.removeEventListener('loadedmetadata', onLoadedmetadata);
+        videoObj.removeEventListener('loadstart', onLoadstart);
+        videoObj.removeEventListener("waiting", onWaiting);
+        videoObj.removeEventListener("stalled", onStalled);
+        videoObj.removeEventListener("suspend", onSuspended);
+        videoObj.removeEventListener('progress', onProgress);
+        videoObj.removeEventListener('pause', onPause);
+        videoObj.removeEventListener('playing', onPlaying);
+        videoObj.removeEventListener('timeupdate', onTimeupdate);
+    }
+
+    function onEnded() {
+        logManager.log("VideoHTML5Manager - onEnded");
+        clearVideo();
+        player.onVideoEndVideo();
+    }
+
+    function onEmptied() {
+        logManager.log("VideoHTML5Manager - onEmptied");
+    }
+
+    function onError(e) {
+        try {
+            networkErrorHandling = true;
+            var errorMessage = "undefined";
+            if (e && e.target.error) {
+                switch (e.target.error.code) {
+                    case 1: /* MEDIA_ERR_ABORTED */
+                        errorMessage = "fetching process aborted by user";
+                        break;
+                    case 2: /* MEDIA_ERR_NETWORK */
+                        errorMessage = "error occurred when downloading";
+                        break;
+                    case 3: /* = MEDIA_ERR_DECODE */
+                        errorMessage = "error occurred when decoding";
+                        break;
+                    case 4: /* MEDIA_ERR_SRC_NOT_SUPPORTED */
+                        errorMessage = "audio/video not supported";
+                        break;
+                }
+            } else {
+                errorMessage = "Error object not defined";
+            }
+
+            logManager.error("VideoHTML5Manager - " + errorMessage);
+
+        } catch (exc) {
+            logManager.error("VideoHTML5Manager - " + exc.message);
+        }
+        player.onVideoError();
+    }
+
+    function onAbort() {
+        logManager.log("VideoHTML5Manager -  abort event triggered");
+        if (!networkErrorHandling) {
+            clearVideo();
+            //player.onAbort();
+        } else {
+            logManager.log("abort event ignored because triggered by network error");
+        }
+
+    }
+
+    function onPlay() {
+        logManager.log("VideoHTML5Manager -  play event triggered");
+        networkErrorHandling = false;
+    }
+
+    function onSeeked() {
+        logManager.log("VideoHTML5Manager - Seeked");
+        player.onSeeked();
+    }
+
+    function onCanplay() {
+        player.onCanPlay();
+        logManager.log("VideoHTML5Manager - canplay");
+    }
+    
+    function onCanplayThrough() {
+        logManager.log("VideoHTML5Manager - canplaythrough");
+    }
+
+    function onLoadedmetadata() {
+        logManager.log("VideoHTML5Manager - loadedmetadata");
+    }
+
+    function onLoadstart() {
+        logManager.log("VideoHTML5Manager - loadstart");
+    }
+
+    function onWaiting(e) {
+        logManager.log("VideoHTML5Manager - " + e.type);
+    }
+
+    function onStalled(e) {
+        logManager.log("VideoHTML5Manager - " + e.type);
+    }
+
+    function onSuspended(e) {
+        logManager.log("VideoHTML5Manager - " + e.type);
+    }
+
+    function onProgress() {
+    }
+
+    function onPause() {
+        logManager.log("VideoHTML5Manager - pause");
+    }
+
+    function onPlaying() {
+        logManager.log("VideoHTML5Manager - playing ");
+        player.onVideoPlayStarted();
+    }
+
+    function onTimeupdate() {
+        var time;
+        if (videoObj) {
+            try {
+                time = videoObj.currentTime;
+            } catch (e) {
+                logManager.warning("prop currentTime not supported");
+            }
+            player.onProgressVideo(time, videoObj.duration);
+        } else {
+            logManager.warning("videoObj not set");
+        }
+    }
+
+    this.seek = function (sec) {
+        try {
+            if (sec > videoObj.duration) {
+                // the position is not right
+                return;
+            } else {
+                videoObj.currentTime = sec;
+            }
+        } catch (e) {
+            logManager.log("error seeking: " + e.message);
+        }
+    };
+
+    this.load = function () {
+        logManager.log("VideoHTML5Manager - load()");
+        videoObj.load();
+    };
+
+    this.setUrl = function setUrl(url) {
+        logManager.log("VideoHTML5Manager - setURL(" + url + ")");
+        try {
+            if (url.match(/.mp4/)) {
+                videoObj.setAttribute("type", "video/mp4");
+            } else {
+                videoObj.setAttribute("type", "application/dash+xml");
+            }
+            videoObj.src = url;
+        } catch (e) {
+            logManager.warning("VideoHTML5Manager - " + e.message);
+        }
+    };
+
+    this.play = function (wasPaused) {
+        logManager.log("VideoHTML5Manager - play()");
+        try {
+            container.className = container.className.replace(/\bhidden\b/g, "");
+            videoObj.play();
+        } catch (e) {
+            logManager.warning("VideoHTML5Manager - " + e.message);
+            clearVideo();
+        }
+    };
+
+    this.isPlaying = function () {
+        return (videoObj && !videoObj.paused); // return true/false
+    };
+
+    this.getDuration = function () {
+        if (videoObj) {
+            return videoObj.duration;
+        } else {
+            return 0;
+        }
+    };
+
+    this.getCurrentTime = function () {
+        if (videoObj) {
+            return Math.round(videoObj.currentTime);
+        } else {
+            return 0;
+        }
+    };
+
+    function clearVideo() {
+        try {
+            if (videoObj) {
+                self.stop();
+            }
+            removeHtmlObjects();
+            videoObj = null;
+        } catch (e) {
+            logManager.log("VideoHTML5Manager - clearVideo() - " + e.message);
+        }
+    }
+
+    this.stop = function stop() {
+        try {
+            if (videoObj) {
+                removeEventsListener();
+                videoObj.pause();
+                videoObj.src = "";
+                try {
+                    videoObj.removeAttribute("src");
+                } catch (e) {
+                }
+                videoObj.load();
+                videoObj.parentNode.removeChild(videoObj);
+                videoObj = null;
+            }
+        } catch (e) {
+            logManager.log("VideoHTML5Manager - stop() - " + e.message);
+        }
+    };
+
+    this.pause = function pause() {
+        logManager.log("VideoHTML5Manager -  pause()");
+        try {
+            videoObj.pause();
+        } catch (e) {
+            logManager.warning(e);
+        }
+    };
+
+};
+
 var AdvRequests =function () {
     var getWizadsDataRetries = 0;
     var getWizadsDataMaxRetries = 1;

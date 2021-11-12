@@ -4,6 +4,7 @@ var Adv = function () {
     var request = new AdvRequests();
     var breakTimer;
     var dictionary = {};
+    var videoPlayers = [];
 
     this.ptsHandlerComponent = new PtsHandlerComponent();
 
@@ -127,6 +128,7 @@ var Adv = function () {
                     return;
                 }
                 createDictionaryVAST(scte_attributes.segmentation_upid, xmldata);
+                createVideoPlayers();
                 //Save dictionary on queue
                 advHashmap.setValue(scte_attributes.segmentation_upid, dictionary, advHashmap.type.STREAMEVENT);
                 advHashmap.setStatus(scte_attributes.segmentation_upid, advHashmap.lstStatus.LOADED);
@@ -212,9 +214,17 @@ var Adv = function () {
     }
 
     function startSCTEEventProcess(scte_attributes, scte_json) {
+        scte_attributes.segment_num = 3;
         self.ptsHandlerComponent.ptsStartEventTimeCheck(scte_json.splice_event.pts_time, null, function () {
             if (featuresManager.getFeature("linearAdTracking") && featuresManager.getFeature("linearAdTracking") === true) {
                 scheduleSpotTracking(scte_attributes.segment_num, scte_attributes.segmentation_upid);
+            }
+            var isAdSwitchBuffered = videoPlayers[scte_attributes.segment_num] && videoPlayers[scte_attributes.segment_num].canPlay();
+            if(isAdSwitchBuffered) {
+                videoPlayers[scte_attributes.segment_num].play();
+                logManager.log('videoPlayers[' + scte_attributes.segment_num + '] started playing.');
+            } else{
+                logManager.log('videoPlayers[' + scte_attributes.segment_num + '] play aborted: canPlay check failed');
             }
         }); //the LOAD event is triggered as soon as it is received, and then Ad Starts are triggered using their PTS
     }
@@ -262,23 +272,19 @@ var Adv = function () {
             if(adBreak.length == 0){
                 logManager.log("createDictionaryVAST() - no Ad Break found in VAST file.");
             }else{
-                try {
-                    var vast = adBreak[0].getElementsByTagNameNS("http://www.iab.net/vmap-1.0", "AdSource")[0].getElementsByTagNameNS("http://www.iab.net/vmap-1.0", "VASTAdData")[0].getElementsByTagName("VAST")[0];
-                    var arrayAds = vast.getElementsByTagName("Ad");
-                }catch (e) {
-                    logManager.log("createDictionaryVAST() - error on VAST parsing. " + e);
+                var vast = adBreak[0].getElementsByTagNameNS("http://www.iab.net/vmap-1.0", "AdSource")[0].getElementsByTagNameNS("http://www.iab.net/vmap-1.0", "VASTAdData")[0].getElementsByTagName("VAST")[0];
+                var arrayAds = vast.getElementsByTagName("Ad");
+                if (arrayAds.length > 0) {
+                    dictionary.id = segmentation_upid;
+                    logManager.log("createDictionaryVAST() - dictionary.id: " + dictionary.id);
+                    dictionary.spots = [];
+                    for (var i = 0; i < arrayAds.length; i++) {
+                        dictionary.spots[parseInt(arrayAds[i].getAttribute("sequence"))] = createTrackingItemsForDictionaryVAST(arrayAds[i]);
+                        logManager.log('createDictionaryVAST() - dictionary.spots[' + (parseInt(arrayAds[i].getAttribute("sequence"))) + '] tracking items loaded');
+                    }
+                } else {
+                    logManager.log("createDictionaryVAST() - no Ads found in VAST file.");
                 }
-            }
-            if (arrayAds.length > 0) {
-                dictionary.id = segmentation_upid;
-                logManager.log("createDictionaryVAST() - dictionary.id: " + dictionary.id);
-                dictionary.spots = [];
-                for (var i = 0; i < arrayAds.length; i++) {
-                    dictionary.spots[parseInt(arrayAds[i].getAttribute("sequence"))] = createTrackingItemsForDictionaryVAST(arrayAds[i]);
-                    logManager.log('createDictionaryVAST() - dictionary.spots[' + (parseInt(arrayAds[i].getAttribute("sequence"))) + '] tracking items loaded');
-                }
-            } else {
-                logManager.log("createDictionaryVAST() - no Ads found in VAST file.");
             }
             /*jshint ignore:end*/
         } catch (e) {
@@ -306,6 +312,31 @@ var Adv = function () {
             /*jshint ignore:end*/
         } catch (e) {
             logManager.error("createDictionary: " + e);
+        }
+    }
+
+    function createVideoPlayers() {
+        if (dictionary.spots == null) {
+            return;
+        }
+        /*
+        //un-comment if consent check is mandatory
+        if (consent.getModel() == null || consent.getModelConsents().TARGETED_ADVERTISING.consentStatus !== true) {
+            logManager.warning('createVideoPlayers - user consent not given to TARGETED ADVERTISING, players loading skipped');
+            return;
+        }*/
+        logManager.log("createVideoPlayers - linearAdSwitch " + featuresManager.getFeature("linearAdSwitch"));
+        if (featuresManager.getFeature("linearAdSwitch") == null || featuresManager.getFeature("linearAdSwitch") === false) {
+            return;
+        }
+        for (var i = 0; i < dictionary.spots.length; i++) {
+            if (dictionary.spots[i] != null && dictionary.spots[i].media_file_type === 'addressed') {
+                logManager.log("dictionary spot number " + i + " has a valid url");
+                videoPlayers[i] = new PlayerADS(function () {
+                    //onStop Callbacks
+                }, '_' + i);
+                videoPlayers[i].setUrl(dictionary.spots[i].media_file_url, true);
+            }
         }
     }
 
@@ -337,11 +368,10 @@ var Adv = function () {
             var mediaFileUrl = currentAD.getElementsByTagName("InLine")[0].getElementsByTagName("Creatives")[0].getElementsByTagName("Creative")[0].getElementsByTagName("Linear")[0].getElementsByTagName("MediaFiles")[0].getElementsByTagName("MediaFile")[0].textContent.trim();
             /*jshint ignore:start*/
             item["media_file_url"] = mediaFileUrl;
-            //Type is "ADDRESSED" by default.
-            item["media_file_type"] = "addressed";
+            item["media_file_type"] = "broadcasted";
             /*jshint ignore:end*/
             if (mediaFileUrl.indexOf(".mp4") !== -1 || mediaFileUrl.indexOf(".mpd") !== -1) {
-                item["media_file_type"] = "broadcasted";
+                item["media_file_type"] = "addressed";
             }
             return item;
         } catch (e) {

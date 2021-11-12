@@ -163,7 +163,7 @@ window.onload = function () {
                             CALL_ADSERVER_FALLBACK_ON_STARTEVENT: true,
                         });
                         streamEvent.initStreamEventsMethod();
-                        //streamEvent.test();//test only: launch dummy scte 35
+                        streamEvent.test();//test only: launch dummy scte 35
                     });
                 }, consent.getConfiguration().TIME_BEFORE_CONSENT_CALL);
 
@@ -195,7 +195,7 @@ window.onload = function () {
     function setRemoteKeys() {
 
         try {
-            var keyToLock =  keyset.YELLOW/* + keyset.BLUE + keyset.RED + keyset.GREEN*/;
+            var keyToLock =  keyset.YELLOW + keyset.BLUE + keyset.RED + keyset.GREEN;
             keyset.setValue(keyToLock);
         } catch (e) {
             logManager.generalError("General Error: " + e.message);

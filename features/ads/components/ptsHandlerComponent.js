@@ -2,7 +2,7 @@ var PtsHandlerComponent = function () {
 
     this.ptsStartEventTimeCheck = function (pts, payloadEvent, callback) {
         if (mediaSyncManager.getCurrentTime() != null) {
-            //pts=mediaSyncManager.getCurrentTime() + 30 * 1000;//test purpose only
+            pts=mediaSyncManager.getCurrentTime() + 30 * 1000;//test purpose only
             logManager.log("ptsStartEventTimeCheck - currentTime: " + mediaSyncManager.getCurrentTime() + " - PTS check starting in " + (pts - mediaSyncManager.getCurrentTime() - adv.getConfiguration().PTS_CHECK_START_TIME - featuresManager.getFeature("ptsSpotModeSwitchInDurationFineTuning")) + "Ms.");
             setTimeout(function () {
                 var ptsCheckPoll = setInterval(function () {
