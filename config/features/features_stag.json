@@ -310,7 +310,7 @@
 			"bindToCurrentChannel": true,
 			"periodicHeartbeat": true,
 			"linearAdTracking": true,
-			"linearAdSwitch": true,
+			"linearAdSwitch": false,
 			"PTSMethod": true,
 			"PTSCheckIntervalFineTuning": 0,
 			"ptsSpotModeSwitchInDurationFineTuning": 360
@@ -326,7 +326,7 @@
 			"bindToCurrentChannel": true,
 			"periodicHeartbeat": true,
 			"linearAdTracking": true,
-			"linearAdSwitch": true,
+			"linearAdSwitch": false,
 			"PTSMethod": true,
 			"PTSCheckIntervalFineTuning": 0,
 			"ptsSpotModeSwitchInDurationFineTuning": 360
