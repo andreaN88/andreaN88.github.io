@@ -67,7 +67,7 @@ window.onload = function () {
                 //Initialize the class to manage editorial labels
                 labelsManager = new LabelsManager();
                 labelsManager.init();
-
+/*
                 //Initialize the class to manage the trace services
                 trace = new Trace();
                 trace.configure({
@@ -76,7 +76,7 @@ window.onload = function () {
                 });
                 if (featuresManager.getFeature("periodicHeartbeat")) {
                     trace.startHeartbeat();
-                }
+                }*/
 
                 //Initialize the class to manage cookies and other storage
                 storageManager = new StorageManager();
@@ -84,7 +84,7 @@ window.onload = function () {
                 //Begin Consent flow
                 logManager.log("getConsent wait-time started");
                 //Initialize the consent manager
-                consent = new Consent(resetRemoteKeys, setRemoteKeys);
+                /*consent = new Consent(resetRemoteKeys, setRemoteKeys);
                 consent.configure({
                     CONSENT_API_ENDPOINT: "./api/consents",
                     PARTNER_API_ENDPOINT: "./api/partners",
@@ -107,12 +107,12 @@ window.onload = function () {
                     BANNER_DISPLAY_TIME: 4000,
                     APP_URL: ""
                 });
-
+                */
                 //Before call the getConsent (it's the call on the start of the app) I'm waiting for TIME_BEFORE_CONSENT_CALL seconds
-                setTimeout(function () {
-                    consent.loadConsentData(function (timeDisplayConsentDirectValidationOverlay) {
-                        consent.consentsDirectValidationOverlayComponent.showConsentDirectValidationOverlay(timeDisplayConsentDirectValidationOverlay);
-                    }, function (consentOverlayDisplaying) {
+                //setTimeout(function () {
+                //    consent.loadConsentData(function (timeDisplayConsentDirectValidationOverlay) {
+                //        consent.consentsDirectValidationOverlayComponent.showConsentDirectValidationOverlay(timeDisplayConsentDirectValidationOverlay);
+                 //   }, function (consentOverlayDisplaying) {
                         streamEvent = new StreamEvent();
                         adv = new Adv();
                         streamEvent.configure({
@@ -129,17 +129,36 @@ window.onload = function () {
                                 0x10: {//0x10 is Program start segmentation type id
                                     FN : function (selectedAttributes, raw_json) {//selectedAttributes are the ones retrieved by scte-35 according to the below ATTRIBUTES
                                         logManager.log("triggered function on scte-35 event");
-                                        banner.startJourney();//show L shaped banner - anyway you can set here the function you want to be triggered by scte-35 Program Start (0x10)
+                                        //banner.startJourney();//show L shaped banner - anyway you can set here the function you want to be triggered by scte-35 Program Start (0x10)
                                     },
                                     ATTRIBUTES: ["pts_time"]
                                 },
                                 0x02: {
                                     FN: function (selectedAttributes, raw_json) {
                                         var adStaticConf = {
-                                            acid : "alpha2",
-
+                                            ADSERVER_FREEWHEEL_NET_DOMAIN : "7e28b",
+                                            ADSERVER_FREEWHEEL_FW_NET_ID : "516747",
+                                            ADSERVER_FREEWHEEL_FW_MODE : "live",
+                                            ADSERVER_FREEWHEEL_FW_PLAYER_PROFILE : "516747:alpha_JL_XML",
+                                            ADSERVER_FREEWHEEL_FW_CAID : "jl_videoasset1",
+                                            ADSERVER_FREEWHEEL_FW_CSID : "alpha_jl_sitesection_iptv_1",
+                                            ADSERVER_FREEWHEEL_FW_RESP : "vmap1",
+                                            ADSERVER_FREEWHEEL_FW_METR : "7",
+                                            ADSERVER_FREEWHEEL_FW_VRDU : selectedAttributes.segmentation_duration || "",
+                                            ADSERVER_FREEWHEEL_FW_FLAG : "+emcr+qtcb+slcb+scpv+exvt",
+                                            ADSERVER_FREEWHEEL_FW_HYLDA : selectedAttributes.segmentation_duration,
+                                            ADSERVER_FREEWHEEL_FW_ACID : "alpha2",
+                                            ADSERVER_FREEWHEEL_FW_AIID : selectedAttributes.segmentation_upid,
+                                            ADSERVER_FREEWHEEL_FW_ABID : /*selectedAttributes.segmentation_upid*/ "14102021_1340",
+                                            ADSERVER_FREEWHEEL_FW_VCID2 : consent ? consent.getModel().tvId: "12345",
+                                            ADSERVER_FREEWHEEL_FW_SLID : selectedAttributes.segmentation_upid,
+                                            ADSERVER_FREEWHEEL_FW_TPCL : "MIDROLL",
+                                            ADSERVER_FREEWHEEL_FW_PTGT : "a",
+                                            ADSERVER_FREEWHEEL_FW_MAXD : selectedAttributes.segmentation_duration || "",
+                                            ADSERVER_FREEWHEEL_FW_MIND : selectedAttributes.segmentation_duration || ""
                                         }
                                         //it s possible to trigger ad server call only if consent is true adding an IF
+                                        selectedAttributes.upid = 3774735585621951500;
                                         adv.callVastAdServerProcess(adStaticConf, selectedAttributes, raw_json);
                                     },
                                     ATTRIBUTES: ["segmentation_upid", "segmentation_duration"]
@@ -162,14 +181,15 @@ window.onload = function () {
                             PTS_CHECK_INTERVAL_TIME: 4,
                             PTS_CHECK_TOLERANCE: 40,
                             BLACK_FRAMES_DURATION_AFTER_SPOT: 360,
-                            VISIBLE_AD_TRACKING: true,
+                            VISIBLE_AD_TRACKING: false,
                             AD_SUBSTITUTION_METHOD: "break",//or "spot"
                             CALL_ADSERVER_FALLBACK_ON_STARTEVENT: true,
                         });
                         streamEvent.initStreamEventsMethod();
-                        //streamEvent.test();//test only: launch dummy scte 35
-                    });
-                }, consent.getConfiguration().TIME_BEFORE_CONSENT_CALL);
+                        streamEvent.test();//test only: launch dummy scte 35
+
+                //});
+                //}, consent.getConfiguration().TIME_BEFORE_CONSENT_CALL);
 
             });
         } catch (e) {
@@ -199,7 +219,7 @@ window.onload = function () {
     function setRemoteKeys() {
 
         try {
-            var keyToLock =  keyset.YELLOW/* + keyset.BLUE + keyset.RED + keyset.GREEN*/;
+            var keyToLock =  keyset.YELLOW + keyset.BLUE + keyset.RED + keyset.GREEN;
             keyset.setValue(keyToLock);
         } catch (e) {
             logManager.generalError("General Error: " + e.message);

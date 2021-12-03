@@ -8,7 +8,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": false,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -23,7 +23,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": false,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -38,7 +38,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -53,7 +53,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -68,7 +68,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -83,7 +83,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -98,7 +98,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -113,7 +113,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -128,7 +128,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -143,7 +143,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -158,7 +158,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -173,7 +173,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": false,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -188,7 +188,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -203,7 +203,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -218,7 +218,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -233,7 +233,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -248,7 +248,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -263,7 +263,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -278,7 +278,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -293,7 +293,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -308,7 +308,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": true,
 			"linearAdSwitch": true,
 			"PTSMethod": true,
@@ -324,7 +324,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": true,
 			"linearAdSwitch": true,
 			"PTSMethod": true,
@@ -340,7 +340,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -355,7 +355,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -370,7 +370,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": false,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -385,7 +385,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -400,7 +400,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": false,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -415,7 +415,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -430,7 +430,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -445,7 +445,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -460,7 +460,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -475,7 +475,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -490,7 +490,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -505,7 +505,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -520,7 +520,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -535,7 +535,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -550,7 +550,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -565,7 +565,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -580,7 +580,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -595,7 +595,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": false,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -610,7 +610,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -625,7 +625,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -640,7 +640,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -655,7 +655,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -670,7 +670,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -685,7 +685,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -700,7 +700,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -715,7 +715,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -730,7 +730,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -745,7 +745,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -760,7 +760,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -775,7 +775,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -790,7 +790,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -805,7 +805,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,
@@ -820,7 +820,7 @@
 		  },
 		  "features": {
 			"bindToCurrentChannel": true,
-			"periodicHeartbeat": false,
+			"periodicHeartbeat": true,
 			"linearAdTracking": false,
 			"PTSMethod": false,
 			"PTSCheckIntervalFineTuning": 0,

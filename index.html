@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//HbbTV//1.1.1//EN" "http://www.hbbtv.org/dtd/HbbTV-1.1.1.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="application/vnd.hbbtv.xhtml+xml; charset=UTF-8"/>
+    <meta name=""/>
+
+    <!-- Stylesheets -->
+    <link type="text/css" rel="stylesheet" href="dist/css/main.css"/>
+    <link type="text/css" rel="stylesheet" href="dist/css/log.css"/>
+    <link type="text/css" rel="stylesheet" href="dist/css/player.css"/>
+
+    <!-- Anti-clickjacking script -->
+    <script type="text/javascript">
+        if (top !== self) top.location.replace(self.location.href);
+    </script>
+
+    <!-- Libs -->
+    <script src="lib/json3.min.js"></script>
+    <script src="lib/jquery.min.js"></script>
+    <script src="lib/konami.js"></script>
+
+    <!-- Minified JS -->
+    <script src="dist/js/scripts.js"></script>
+    <script src="node_modules/tvium-core/dist/scripts.min.js"></script>
+    <script src="node_modules/tvium-streamevent/dist/scripts.js"></script>
+    <script src="node_modules/tvium-ads/dist/scripts.js"></script>
+
+
+</head>
+
+<body>
+<div id="logContainer" class="log-container"></div>
+<object id="video" type="video/broadcast" class="fullscreen video-broadcast"></object>
+<div class="tvium-container">
+    <div class="consent-section"></div>
+</div>
+<div id="applicationContainer" class="application-container">
+    <object type="application/oipfApplicationManager" id="appMan"></object>
+    <object type="application/hbbtvMediaSynchroniser" id="msync"></object>
+</div>
+</body>
+</html>
